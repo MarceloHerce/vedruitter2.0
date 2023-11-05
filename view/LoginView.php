@@ -29,7 +29,7 @@
 <body>
     <?php if(!isset($_SESSION["usuario"])):?>
         <div class="container mt-5">
-            <form action="./controller/LoginController.php" method="POST" id="LoginRegister">
+            <form action=".\controller\LoginController.php" method="POST" id="LoginRegister">
             <h6 id="formFunc">Login<h6>
             <div class="form-group">
                 <label for="username">User Name</label>

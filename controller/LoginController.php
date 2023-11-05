@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("../model/UserDAO.php");
+require_once(dirname(__DIR__)."\\model\\UserDAO.php");
 if(isset($_POST["login"])){
     var_dump($_POST);
     $email = trim($_POST["mail"]);
@@ -18,12 +18,4 @@ if(isset($_POST["login"])){
 }else{
     echo "adios";
 }
-#require("./model/ProductDAO.php");
-
-#$results = selectProducts($pdo);
-
-// Cerrar la conexion
-#$pdo = null;
-
-#require("./view/ProductView.php");
 ?>
