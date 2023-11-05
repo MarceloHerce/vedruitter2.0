@@ -1,7 +1,8 @@
 <?php
-require_once("../connection/Connection.php");
-require("../model/User.php");
-
+require_once(dirname(__DIR__).'\\connection\\Connection.php');
+#D:\GitProjects\vedruitter2.0\connection\Connection.php
+require_once(dirname(__DIR__).'\\model\\User.php');
+require_once(dirname(__DIR__).'\\model\\Vedrutweet.php');
 #Resgistrar usuario
 function registerUser($pdo,$email,$pass,$name) {
     try{
@@ -42,6 +43,7 @@ function registerUser($pdo,$email,$pass,$name) {
         echo $e;
     }
 }
+
 #Verificar usuario
 function existsUser($pdo,$email,$pass,$name){
     try{
@@ -50,9 +52,20 @@ function existsUser($pdo,$email,$pass,$name){
         $usuario = $statement->fetch(PDO::FETCH_ASSOC);
         #fetch() solo selecciona una fila si no hay fila es false
         if ($usuario) {
-            var_dump($usuario);
-            if (password_verify($pass, $usuario["password"])) {
-                $_SESSION["usuario"] = $usuario;
+            $usuario2 = new User ($usuario["id"], $usuario["username"],$usuario["email"],$usuario["password"],
+            $usuario["description"], $usuario["createDate"]);
+            selectVedrutweetsFromUser($pdo,$usuario2);
+            if (password_verify($pass, $usuario2->password)) {
+                var_dump($usuario);
+                echo "<br>";
+                var_dump($usuario2);
+                echo "<br>";
+                var_dump($_SESSION["usuario"]);
+                $_SESSION["usuario"] = ($usuario2);
+                echo "<br>";
+                var_dump($_SESSION["usuario"]);
+                echo "<br>"."como <br>";
+                var_dump($_SESSION["usuario"]);
             
                 header("Location: ../index.php");
             } else {
@@ -68,6 +81,7 @@ function existsUser($pdo,$email,$pass,$name){
         echo $e;
     }
 }
+
 #Seleccionar los usuario
 function selectUser($pdo){
     try{
@@ -75,9 +89,10 @@ function selectUser($pdo){
         $statement->binParam(1,$username);
         $statement->execute();
         $result = [];
-        foreach($statement->fetchAll() as $tweet){
-            $objectT = new User($tweet["id"], $tweet["username"],$tweet["email"],$tweet["password"],
-            $tweet["description"], $tweet["createDate"]);
+        foreach($statement->fetchAll() as $username){
+            $objectT = new User($username["id"], $username["username"],$username["email"],$username["password"],
+            $username["description"], $username["createDate"]);
+            selectVedrutweetsFromUser($pdo,$objectT);
             array_push($result, $objectT);
             #TODO push a array general de users
         }
@@ -88,18 +103,39 @@ function selectUser($pdo){
         echo $e;
     }
 }
-
+#Seleccionar todos los usuarios
+function selectAllUsers($pdo){
+    try{
+        $statement = $pdo->prepare("SELECT * FROM users");
+        $statement->execute();
+        $result = [];
+        foreach($statement->fetchAll() as $user){
+            $objectU = new User($user["id"], $user["username"],$user["email"],$user["password"],
+            $user["description"], $user["createDate"]);
+            selectVedrutweetsFromUser($pdo,$objectU);
+            array_push($result, $objectU);
+            #TODO push a array general de users
+            #array_push($_SESSION["global"]->users, $objectU);
+        }
+        return $result;
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
+}
 #Seleccionar los usuarios seguidos
 function selectFollowed($pdo, User $user){
     try{
-        $statement = $pdo->prepare("SELECT userToFollowId FROM follows WHERE users_id = (?);");
-        $statement->binParam(1,$user->id);
+        $statement = $pdo->prepare("SELECT DISTINCT userToFollowId FROM follows WHERE users_id = (?)");
+        $id= $user->id;
+        $statement->bindParam(1,$id);
         $statement->execute();
-        foreach($statement->fetchAll() as $tweet){
-            $objectT = new Vedrutweet($tweet["userToFollowId"]);
-            array_push($user->usersFollowed, $objectT);
+        foreach($statement->fetchAll() as $idUser){
+            $idU = $idUser["userToFollowId"];
+            if(!in_array((int) $idU,$user->usersFollowed)){
+                $user->pushToData("usersFollowed", $idU);
+            }
         }
-        var_dump($user->usersFollowed);
     }catch (PDOException $e) {
         echo "No se ha podido completar la transaccion del vedrutweet";
         echo $e;
@@ -109,14 +145,16 @@ function selectFollowed($pdo, User $user){
 #Seleccionar los seguidores
 function selectFollowers($pdo, User $user){
     try{
-        $statement = $pdo->prepare("SELECT userToFollowId FROM users_id WHERE userToFollowId = (?);");
-        $statement->binParam(1,$user->id);
+        $statement = $pdo->prepare("SELECT DISTINCT userToFollowId FROM users_id WHERE userToFollowId = (?);");
+        $id= $user->id;
+        $statement->bindParam(1,$id);
         $statement->execute();
-        foreach($statement->fetchAll() as $tweet){
-            $objectT = new Vedrutweet($tweet["userToFollowId"]);
-            array_push($user->usersFollowers, $objectT);
+        foreach($statement->fetchAll() as $idUser){
+            $idU = $idUser["userToFollowId"];
+            if(!in_array($idU,$user->usersFollowers)){
+                $user->pushToData("usersFollowers", $idU);
+            }
         }
-        var_dump($user->usersFollowers);
     }catch (PDOException $e) {
         echo "No se ha podido completar la transaccion del vedrutweet";
         echo $e;
@@ -124,7 +162,19 @@ function selectFollowers($pdo, User $user){
 }
 
 #Seleccionar Vedrutweets del usuario
-function selectVedrutweetsFromUser($pdo,$user, ){
-
+function selectVedrutweetsFromUser($pdo,$user){
+    try{
+        $statement = $pdo->prepare("SELECT * FROM social_network.publications WHERE userId = (?) ORDER BY createDate DESC");
+        $id= $user->id;
+        $statement->bindParam(1,$id);
+        $statement->execute();
+        foreach($statement->fetchAll() as $tweet){
+            $objectT = new Vedrutweet($tweet["id"],$tweet["userId"],$tweet["text"],$tweet["createDate"]);
+            $user->pushToData("vedrutweets", $objectT);
+        }
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
 }
 ?>

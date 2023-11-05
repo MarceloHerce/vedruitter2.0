@@ -5,9 +5,17 @@ class Web{
     protected $vedrutweets;
     public function __construct(){
         $this->users = [];
-        $this->Vedrutweets = [];
+        $this->vedrutweets = [];
     }
-
+    public function __get($atributo){
+        return $this->$atributo;
+    }
+    public function setVedrutweets($vedrutweets) {
+        $this->vedrutweets = $vedrutweets;
+    }
+    public function setUsers($users) {
+        $this->users = $users;
+    }
     #Patron singleton
     /*
      private static $instance;

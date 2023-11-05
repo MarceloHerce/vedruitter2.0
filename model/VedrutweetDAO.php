@@ -1,6 +1,6 @@
 <?php
-require_once("../connection/Connection.php");
-require("../model/Vedrutweet.php");
+require_once(dirname(__DIR__)."\\connection\\Connection.php");
+require_once(dirname(__DIR__)."\\model\\Vedrutweet.php");
 
 function selectAllVedrutweets($pdo){
     try{
@@ -11,15 +11,42 @@ function selectAllVedrutweets($pdo){
             $objectT = new Vedrutweet($tweet["userId"], $tweet["text"], $tweet["createDate"]);
             array_push($result, $objectT);
             #TODO push a array general de tweets
+            #array_push($_SESSION["global"]->users, $objectU);
         }
-        var_dump($result);
         return $result;
     }catch (PDOException $e) {
         echo "No se ha podido completar la transaccion del vedrutweet";
         echo $e;
     }
 }
+function selectName($pdo,Vedrutweet $tweet){
+    try{
+        $statement = $pdo->prepare("SELECT username FROM users WHERE id = (?)");
+        $id= $tweet->userId;
+        $statement->bindParam(1,$id);
+        $statement->execute();
+        return $statement->fetch()["username"];
+    }catch(Exception $e){
+        echo "error de busqueda";
+    }
+}
 function selectFollowedVedrutweets($pdo, $user){
-    #TODO
+    try{
+        $statement = $pdo->prepare("SELECT * FROM publications WHERE id IN (?) ORDER BY createDate DESC");
+        $ids = implode(',', $user->usersFollowed);
+        $statement->bindParam(1,$ids);
+        $statement->execute();
+        $result = [];
+        foreach($statement->fetchAll() as $tweet){
+            $objectT = new Vedrutweet($tweet["userId"], $tweet["text"], $tweet["createDate"]);
+            array_push($result, $objectT);
+            #TODO push a array general de tweets
+            #array_push($_SESSION["global"]->users, $objectU);
+        }
+        return $result;
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
 }
 ?>

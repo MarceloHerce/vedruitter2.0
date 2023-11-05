@@ -2,12 +2,12 @@
 require_once("../connection/Connection.php");
 require_once("User.php");
 
-$statement = $pdo->prepare("SELECT * FROM users WHERE username='marcelo'");
+$statement = $pdo->prepare("SELECT * FROM users");
 $statement->execute();
 var_dump($statement);
 $result = [];
-foreach($statement->fetchAll(PDO::FETCH_ASSOC) as $tweet){
-    $objectT = new User($tweet["id"], $tweet["username"],$tweet["email"],$tweet["password"],$tweet["description"], $tweet["createDate"]);
+foreach($statement->fetchAll(PDO::FETCH_ASSOC) as $user){
+    $objectT = new User($user["id"], $user["username"],$user["email"],$user["password"],$user["description"], $user["createDate"]);
     array_push($result, $objectT);
 }
 var_dump($result);

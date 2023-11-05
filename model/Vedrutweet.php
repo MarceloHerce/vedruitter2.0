@@ -9,6 +9,9 @@ class Vedrutweet{
         $this->text = $text;
         $this->createDate = $createDate;
     }
+    public function __get($atributo){
+        return $this->$atributo;
+    }
 }
 
 ?>
