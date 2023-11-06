@@ -13,17 +13,17 @@ $pubTodos = $_SESSION["global"]->vedrutweets;
 #Tweets de seguidos
 #$_SESSION["usuario"] = in_array($_SESSION["global"]->users);
 #$results = selectProducts($pdo);
-echo"<br>";
-echo"usuario followers";
-var_dump( $_SESSION["usuario"]->usersFollowers);
-echo"<br>";
+// echo"<br>";
+// echo"usuario followers";
+// var_dump( $_SESSION["usuario"]->usersFollowers);
+// echo"<br>";
 
 selectFollowed($pdo, $_SESSION["usuario"]);
-echo"usersFollowed";
-var_dump($_SESSION["usuario"]->usersFollowed);
-echo"<br>";
+// echo"usersFollowed";
+// var_dump($_SESSION["usuario"]->usersFollowed);
+// echo"<br>";
 $pubSeguidos = selectFollowedVedrutweets($pdo,$_SESSION["usuario"]);
-echo"<br>";
+// echo"<br>";
 require("./view/HomeView.php");
 
 // Cerrar la conexion

@@ -3,6 +3,7 @@ require_once(dirname(__DIR__).'\\connection\\Connection.php');
 #D:\GitProjects\vedruitter2.0\connection\Connection.php
 require_once(dirname(__DIR__).'\\model\\User.php');
 require_once(dirname(__DIR__).'\\model\\Vedrutweet.php');
+
 #Resgistrar usuario
 function registerUser($pdo,$email,$pass,$name) {
     try{

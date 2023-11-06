@@ -8,9 +8,16 @@
 <body>
 <?php if(isset($_SESSION["usuario"])):?>
     <!-- Perfil de usuario -->
-    <div></div>
+    <div class="s">
+        <div class="d-flex">
+            <h3><?= $_SESSION["usuario"]->userName;?></h3>
+            <p>Description:</p>
+        </div>
+        <p><?= $_SESSION["usuario"]->description?></p>
+        <a href="model/Logout.php" class="m-3 btn btn-primary">Logout</a>
+    </div>
     <!-- Vedrutweets de segidos y de todos -->
-    <main>
+    <main class="container ">
         <div>
             <a id="seguidosBtn" class="m-3 btn btn-primary">Seguidos</a>
             <a id="todosBtn" class="m-3 btn btn-primary">Todos</a>
@@ -19,7 +26,9 @@
             seguidos
             <?php foreach($pubSeguidos as $publication): ?>
                 <div>
-                    <h4><?= selectName($pdo,$publication);?></h4>
+                    <a href=".\controller\UserPageController.php?id=<?= $publication->userId?>">
+                        <h4><?= selectName($pdo,$publication);?></h4>
+                    </a>
                     <p><?= $publication->text;?></p>
                     <p><?= $publication->createDate;?></p>
                 </div>
@@ -29,7 +38,9 @@
             todos
             <?php foreach($pubTodos as $publication): ?>
                 <div>
-                    <h4><?= selectName($pdo,$publication);?></h4>
+                    <a href=".\controller\UserPageController.php?id=<?= $publication->userId?>">
+                        <h4><?= selectName($pdo,$publication);?></h4>
+                    </a>
                     <p><?= $publication->text;?></p>
                     <p><?= $publication->createDate;?></p>
                 </div>
