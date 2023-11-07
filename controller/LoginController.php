@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once(dirname(__DIR__)."\\model\\UserDAO.php");
+
 if(isset($_POST["login"])){
     var_dump($_POST);
     $email = trim($_POST["mail"]);

@@ -9,13 +9,19 @@
 <?php if(isset($_SESSION["usuario"])):?>
     <!-- Perfil de usuario -->
     <div class="s">
-        <div class="d-flex">
-            <h3><?= $_SESSION["usuario"]->userName;?></h3>
-            <p>Description:</p>
+        <div class="d-flex flex-column">
+            <a href=".\controller\UserPageController.php?id=<?= $_SESSION["usuario"]->id?>"><h3><?= $_SESSION["usuario"]->userName;?></h3><a>
+            <div>
+                <p>Description:</p>
+                <p><?= $_SESSION["usuario"]->description?></p>
+            </div>
         </div>
-        <p><?= $_SESSION["usuario"]->description?></p>
-        <a href="model/Logout.php" class="m-3 btn btn-primary">Logout</a>
+        <div class="d-flex align-items-center p-2">
+            <p>Desde: <?= $_SESSION["usuario"]->createDate;?></p>
+            <a href="model/Logout.php" class="m-3 btn btn-primary">Logout</a>
+        </div>
     </div>
+
     <!-- Vedrutweets de segidos y de todos -->
     <main class="container ">
         <div>

@@ -131,6 +131,7 @@ function selectFollowed($pdo, User $user){
         $id= $user->id;
         $statement->bindParam(1,$id);
         $statement->execute();
+        $user->usersFollowed=[];
         foreach($statement->fetchAll() as $idUser){
             $idU = $idUser["userToFollowId"];
             if(!in_array((int) $idU,$user->usersFollowed)){
@@ -169,10 +170,57 @@ function selectVedrutweetsFromUser($pdo,$user){
         $id= $user->id;
         $statement->bindParam(1,$id);
         $statement->execute();
+        $user->vedrutweets=[];
         foreach($statement->fetchAll() as $tweet){
-            $objectT = new Vedrutweet($tweet["id"],$tweet["userId"],$tweet["text"],$tweet["createDate"]);
+            $objectT = new Vedrutweet($tweet["userId"],$tweet["text"],$tweet["createDate"]);
             $user->pushToData("vedrutweets", $objectT);
         }
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
+}
+
+#Dejar de seguir
+function unfollow($pdo, $user, $idUnfollow){
+    try{
+        $statement = $pdo->prepare("DELETE FROM follows WHERE users_id= (?) AND userToFollowId = (?)");
+        $id= $user->id;
+        $statement->bindParam(1,$id);
+        $statement->bindParam(2,$idUnfollow);
+        $statement->execute();
+        #Actualizar el array de followers del usuario
+        selectFollowed($pdo, $user);
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
+}
+#Comenzar de seguir
+function follow($pdo, $user, $idToFollow){
+    try{
+        $statement = $pdo->prepare("INSERT INTO follows VALUES ((?),(?))");
+        $id= $user->id;
+        $statement->bindParam(1,$id);
+        $statement->bindParam(2,$idToFollow);
+        $statement->execute();
+        #Actualizar el array de followers del usuario
+        selectFollowed($pdo, $user);
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
+}
+#Insert nueva descripcion
+function modifyDescription($pdo,$user,$newDescription){
+    try{
+        $statement = $pdo->prepare("UPDATE users SET  description= ( ? ) WHERE id= ( ? )");
+        $id= $user->id;
+        $statement->bindParam(1,$newDescription);
+        $statement->bindParam(2,$id);
+        $statement->execute();
+        #Actualizar el array de followers del usuario
+        #selectFollowed($pdo, $user);
     }catch (PDOException $e) {
         echo "No se ha podido completar la transaccion del vedrutweet";
         echo $e;

@@ -72,23 +72,6 @@
                 }
             });
         </script>
-        <!-- Sesion iniciada -->
-        <main>
-            <!-- Barra nav -->
-            <div id="l-bar">
-                
-            </div>
-            <!-- Publicaciones -->
-            <div id="c-bar">
-                
-            </div>
-            
-            <!-- Recomendaciones -->
-            <div id="r-bar">
-                
-            </div>
-        </main>
-        <!-- Sesion iniciada -->
     <?php else:?>
     <?php endif ?>
 </body>

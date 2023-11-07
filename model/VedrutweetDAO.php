@@ -2,6 +2,7 @@
 require_once(dirname(__DIR__)."\\connection\\Connection.php");
 require_once(dirname(__DIR__)."\\model\\Vedrutweet.php");
 
+#Selecionar todos los tweets
 function selectAllVedrutweets($pdo){
     try{
         $statement = $pdo->query("SELECT * FROM publications ORDER BY createDate DESC");
@@ -19,6 +20,7 @@ function selectAllVedrutweets($pdo){
         echo $e;
     }
 }
+#Seleccionar nombre dado una id
 function selectName($pdo,Vedrutweet $tweet){
     try{
         $statement = $pdo->prepare("SELECT username FROM users WHERE id = (?)");
@@ -30,6 +32,7 @@ function selectName($pdo,Vedrutweet $tweet){
         echo "error de busqueda";
     }
 }
+#Seleccionar tweets de seguidos
 function selectFollowedVedrutweets($pdo, $user){
     try{
         $statement = $pdo->prepare("SELECT * FROM publications WHERE id IN (?) ORDER BY createDate DESC");
@@ -44,6 +47,20 @@ function selectFollowedVedrutweets($pdo, $user){
             #array_push($_SESSION["global"]->users, $objectU);
         }
         return $result;
+    }catch (PDOException $e) {
+        echo "No se ha podido completar la transaccion del vedrutweet";
+        echo $e;
+    }
+}
+
+#Insertar tweet
+function insertVedrutweet($pdo,$text,$userId){
+    try{
+        $statement = $pdo->prepare("INSERT INTO publications VALUES (0,(?),(?), CURDATE()) ");
+        $statement->bindParam(1,$userId);
+        $statement->bindParam(2,$text);
+        $statement->execute();
+        
     }catch (PDOException $e) {
         echo "No se ha podido completar la transaccion del vedrutweet";
         echo $e;
