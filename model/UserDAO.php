@@ -57,18 +57,7 @@ function existsUser($pdo,$email,$pass,$name){
             $usuario["description"], $usuario["createDate"]);
             selectVedrutweetsFromUser($pdo,$usuario2);
             if (password_verify($pass, $usuario2->password)) {
-                var_dump($usuario);
-                echo "<br>";
-                var_dump($usuario2);
-                echo "<br>";
-                var_dump($_SESSION["usuario"]);
                 $_SESSION["usuario"] = ($usuario2);
-                echo "<br>";
-                var_dump($_SESSION["usuario"]);
-                echo "<br>"."como <br>";
-                var_dump($_SESSION["usuario"]);
-            
-                header("Location: ../index.php");
             } else {
                 $_SESSION["error_login"] = "Login incorrecto";
                 header("Location: ../index.php");
@@ -214,7 +203,7 @@ function follow($pdo, $user, $idToFollow){
 #Insert nueva descripcion
 function modifyDescription($pdo,$user,$newDescription){
     try{
-        $statement = $pdo->prepare("UPDATE users SET  description= ( ? ) WHERE id= ( ? )");
+        $statement = $pdo->prepare("UPDATE usersSET  description= ( ? ) WHERE id= ( ? )");
         $id= $user->id;
         $statement->bindParam(1,$newDescription);
         $statement->bindParam(2,$id);
